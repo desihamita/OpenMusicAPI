@@ -12,11 +12,10 @@ class AlbumsService {
   async addAlbum({ name, year }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO albums VALUES($1, $2, $3, $4, $5) RETURNING id',
-      values: [id, name, year, createdAt, updatedAt],
+      text: 'INSERT INTO albums VALUES($1, $2, $3, $4, $4) RETURNING id',
+      values: [id, name, year, createdAt],
     };
 
     const result = await this._pool.query(query);
@@ -29,8 +28,15 @@ class AlbumsService {
   }
 
   async getAlbums() {
-    const result = await this._pool.query('SELECT * FROM albums');
-    return result.rows.map(mapDBToModel);
+    const query = {
+      text: 'SELECT * FROM albums WHERE album_id =$1',
+      value: [id],
+    };
+    const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('Album tidak ditemukan');
+    }
+    return result.rows[0];
   }
 
   async getAlbumById(id) {
@@ -39,9 +45,11 @@ class AlbumsService {
       values: [id],
     };
     const resultAlbum = await this._pool.query(query);
-    if (!resultAlbum.rows.length) {
+
+    if (!resultAlbum.rowCount) {
       throw new NotFoundError('Album tidak ditemukan');
     }
+
     const album = resultAlbum.rows[0];
     const result = {
       id: album.id,
@@ -52,14 +60,13 @@ class AlbumsService {
     return result;
   }
 
-  // mendapatkan lagu
   async getSongsInAlbum(id) {
     const query = {
       text: 'SELECT id, title, performer FROM songs WHERE "albumId" = $1',
       values: [id],
     };
     const result = await this._pool.query(query);
-    return result.rows.map(mapDBToModelSong);
+    return result.rows.map(mapDBToModel);
   }
 
   async editAlbumById(id, { name, year }) {

@@ -22,17 +22,31 @@ class SongsService {
     };
 
     const result = await this._pool.query(query);
-
     if (!result.rows[0].id) {
       throw new InvariantError('Catatan gagal ditambahkan');
     }
-
     return result.rows[0].id;
   }
 
-  async getSongs() {
-    const resultSong = await this._pool.query('SELECT id, title, performer FROM songs');
-    return resultSong.rows;
+  async getSongs(title, performer) {
+    let filteredSong = await this._pool.query(
+      'SELECT id, title, performer FROM songs',
+    );
+
+    if (title !== undefined) {
+      const query = {
+        text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1',
+        values: [`%${title}%`],
+      };
+      filteredSong = await this._pool.query(query);
+    }
+
+    if (performer !== undefined) {
+      filteredSong = await this._pool.query(
+        `SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE '%${performer}%'`,
+      );
+    }
+    return filteredSong.rows.map(mapDBToModel);
   }
 
   async getSongById(id) {
@@ -46,7 +60,7 @@ class SongsService {
       throw new NotFoundError('Lagu tidak ditemukan');
     }
 
-    return resultSong.rows.map(mapDBToModel)[0];
+    return mapDBToModel(resultSong.rows[0]);
   }
 
   async editSongById(id, {

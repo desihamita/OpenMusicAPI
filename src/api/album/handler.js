@@ -63,10 +63,12 @@ class AlbumsHandler {
     try {
       const { id } = request.params;
       const album = await this._service.getAlbumById(id);
+      const songs = await this._service.getSongsInAlbum(id);
+      const getDetailAlbumWichContainsSongs = { ...album, songs };
       return {
         status: 'success',
         data: {
-          album,
+          album: getDetailAlbumWichContainsSongs,
         },
       };
     } catch (error) {
@@ -79,11 +81,11 @@ class AlbumsHandler {
         return response;
       }
 
+      // Server ERROR!
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.',
       });
-
       response.code(500);
       console.error(error);
       return response;
