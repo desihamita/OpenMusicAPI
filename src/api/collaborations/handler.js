@@ -16,15 +16,18 @@ class CollaborationsHandler {
       const { id: credentialId } = request.auth.credentials;
       const { playlistId, userId } = request.payload;
 
+      await this._usersService.verifyUserIsExist(userId);
       await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
-      // eslint-disable-next-line max-len
-      const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
+      const result = await this._collaborationsService.addCollaboration(
+        playlistId,
+        userId,
+      );
 
       const response = h.response({
         status: 'success',
         message: 'Kolaborasi berhasil ditambahkan',
         data: {
-          collaborationId,
+          collaborationId: result,
         },
       });
       response.code(201);
