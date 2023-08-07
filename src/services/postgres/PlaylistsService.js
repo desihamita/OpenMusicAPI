@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
+const { mapActivity } = require('../../utils');
 
 class PlaylistsService {
   constructor(collaborationsService) {
@@ -72,6 +73,35 @@ class PlaylistsService {
     }
 
     return result.rows[0];
+  }
+
+  async getPlaylistActivitiesById(playlistId) {
+    const query = {
+      text: `SELECT u.username, s.title, a.action, a.time
+      FROM playlist_song_activities a
+      INNER JOIN songs s
+      ON a.song_id = s.id
+      INNER JOIN users u
+      ON a.user_id = u.id
+      WHERE playlist_id = $1
+      ORDER BY a.time ASC`,
+      values: [playlistId],
+    };
+    const result = await this._pool.query(query);
+    return result.rows.map(mapActivity);
+  }
+
+  async addActivity(playlistId, songId, userId, action) {
+    const id = `activities-${nanoid(16)}`;
+    const timestamp = new Date().toISOString();
+
+    const query = {
+      text: 'INSERT INTO playlist_song_activities VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      values: [id, playlistId, songId, userId, action, timestamp],
+    };
+
+    const result = await this._pool.query(query);
+    return result;
   }
 
   async verifyPlaylistOwner(playlistId, owner) {

@@ -227,6 +227,25 @@ class PlaylistsHandler {
       return response;
     }
   }
+
+  async getPlaylistActivitiesByIdHandler(req) {
+    const { id } = req.params;
+    const { id: credentialId } = req.auth.credentials;
+
+    await this._playlistsService.verifyPlaylistAccess(id, credentialId);
+
+    const activities = await this._playlistsService.getPlaylistActivitiesById(
+      id,
+    );
+
+    return {
+      status: 'success',
+      data: {
+        playlistId: id,
+        activities,
+      },
+    };
+  }
 }
 
 module.exports = PlaylistsHandler;
