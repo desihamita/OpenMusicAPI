@@ -1,9 +1,9 @@
 const InvariantError = require('../../exceptions/InvariantError');
-const { CollaborationPayloadSchema } = require('./schema');
+const { CollaborationsPayloadSchema } = require('./schema');
 
 const CollaborationsValidator = {
   validateCollaborationPayload: (payload) => {
-    const validationResult = CollaborationPayloadSchema.validate(payload);
+    const validationResult = CollaborationsPayloadSchema.validate(payload);
 
     if (validationResult.error) {
       throw new InvariantError(validationResult.error.message);

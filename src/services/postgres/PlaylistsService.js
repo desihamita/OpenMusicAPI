@@ -74,10 +74,10 @@ class PlaylistsService {
     return result.rows[0];
   }
 
-  async verifyPlaylistOwner(id, owner) {
+  async verifyPlaylistOwner(playlistId, owner) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id = $1',
-      values: [id],
+      values: [playlistId],
     };
 
     const result = await this._pool.query(query);
@@ -93,15 +93,15 @@ class PlaylistsService {
     }
   }
 
-  async verifyPlaylistAccess(id, userId) {
+  async verifyPlaylistAccess(playlistId, userId) {
     try {
-      await this.verifyPlaylistOwner(id, userId);
+      await this.verifyPlaylistOwner(playlistId, userId);
     } catch (error) {
       if (error instanceof NotFoundError) {
         throw error;
       }
       try {
-        await this._collaborationsService.verifyCollaborator(id, userId);
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
       } catch {
         throw new AuthorizationError(
           'Anda bukan merupakan kolaborator dari playlist ini',

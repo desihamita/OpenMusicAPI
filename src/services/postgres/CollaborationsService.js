@@ -1,5 +1,5 @@
-const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
+const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 
 class CollaborationsService {
@@ -29,8 +29,10 @@ class CollaborationsService {
       text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
       values: [playlistId, userId],
     };
+
     const result = await this._pool.query(query);
-    if (!result.rows.length) {
+
+    if (!result.rowCount) {
       throw new InvariantError('Kolaborasi gagal dihapus');
     }
   }
@@ -40,9 +42,11 @@ class CollaborationsService {
       text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
       values: [playlistId, userId],
     };
-    const result = await this._pool.query(query);
-    if (!result.rows.length) {
-      throw new InvariantError('Kolaborasi gagal diverifikasi');
+
+    const { rows } = await this._pool.query(query);
+
+    if (!rows.length) {
+      throw new AuthorizationError('Kolaborasi gagal diverifikasi');
     }
   }
 }
