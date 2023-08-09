@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { mapDBToModel } = require('../../utils');
+const { mapDBToSongsModel } = require('../../utils');
 
 class SongsService {
   constructor() {
@@ -45,7 +45,7 @@ class SongsService {
         `SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE '%${performer}%'`,
       );
     }
-    return filteredSong.rows.map(mapDBToModel);
+    return filteredSong.rows.map(mapDBToSongsModel);
   }
 
   async getSongById(id) {
@@ -59,7 +59,7 @@ class SongsService {
       throw new NotFoundError('Lagu tidak ditemukan');
     }
 
-    return mapDBToModel(resultSong.rows[0]);
+    return mapDBToSongsModel(resultSong.rows[0]);
   }
 
   async editSongById(id, {
