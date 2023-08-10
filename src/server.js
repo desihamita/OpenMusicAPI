@@ -65,7 +65,7 @@ const init = async () => {
   const authenticationsService = new AuthenticationsService();
   const playlistsService = new PlaylistsService(collaborationsService);
   const playlistSongsService = new PlaylistSongsService(playlistsService);
-  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'));
+  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'), cacheService);
   const albumLikesService = new AlbumLikesService(albumsService, cacheService);
 
   const server = Hapi.server({
@@ -171,7 +171,6 @@ const init = async () => {
       plugin: albumLikes,
       options: {
         service: albumLikesService,
-        albumsService,
       },
     },
   ]);

@@ -1,9 +1,7 @@
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
   pgm.addColumn('albums', {
     coverUrl: {
-      type: 'varchar(255)',
+      type: 'TEXT',
     },
   });
 };

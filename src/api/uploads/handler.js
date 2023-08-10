@@ -11,10 +11,14 @@ class UploadsHandler {
     const { id } = request.params;
     this._validator.validateImageHeaders(cover.hapi.headers);
 
-    const filename = await this._service.writeFile(cover, cover.hapi);
-    const coverUrl = `http://${process.env.HOST}:${process.env.PORT}/uploads/images/${filename}`;
+    const filename = await this._service.writeFile(
+      cover,
+      cover.hapi,
+    );
 
-    await this._service.addCoverAlbum(id, coverUrl);
+    const coverUrl = `http://${process.env.HOST}:${process.env.PORT}/uploads/images/${filename}`;
+    await this._service.addAlbumCover(id, coverUrl);
+
     const response = h.response({
       status: 'success',
       message: 'Sampul berhasil diunggah',
