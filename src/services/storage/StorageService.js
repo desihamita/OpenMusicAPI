@@ -26,15 +26,15 @@ class StorageService {
     });
   }
 
-  async addAlbumCover(filename, albumId) {
+  async addCoverAlbum(coverUrl, albumId) {
     const query = {
       text: 'UPDATE albums SET "coverUrl" = $1 WHERE id = $2',
-      values: [filename, albumId],
+      values: [coverUrl, albumId],
     };
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Gagal memperbarui Sampul. Id tidak ditemukan');
+      throw new NotFoundError('Gagal memperbarui cover. Id tidak ditemukan');
     }
   }
 }

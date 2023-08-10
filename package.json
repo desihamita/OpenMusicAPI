@@ -30,6 +30,7 @@
     "nanoid": "^3.3.6",
     "node-pg-migrate": "^6.2.2",
     "pg": "^8.11.1",
+    "redis": "^4.6.7",
     "undefsafe": "^2.0.5"
   }
 }
