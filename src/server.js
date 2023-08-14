@@ -6,6 +6,7 @@ const path = require('path');
 const Inert = require('@hapi/inert');
 
 const ClientError = require('./exceptions/ClientError');
+const config = require('./utils/config');
 
 // albums
 const albums = require('./api/album');
@@ -155,8 +156,8 @@ const init = async () => {
     {
       plugin: _exports,
       options: {
-        playlistsService,
         service: ProducerService,
+        playlistsService,
         validator: ExportsValidator,
       },
     },

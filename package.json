@@ -1,7 +1,6 @@
 {
   "name": "openmusicapi",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start-prod": "NODE_ENV=production node ./src/server.js",
@@ -32,5 +31,14 @@
     "pg": "^8.11.1",
     "redis": "^4.6.7",
     "undefsafe": "^2.0.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/desihamita/OpenMusicAPI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/desihamita/OpenMusicAPI/issues"
+  },
+  "homepage": "https://github.com/desihamita/OpenMusicAPI#readme",
+  "description": ""
 }
